@@ -20,8 +20,15 @@ class AccountsController extends Controller
             'expiration' => Carbon::now()->addYear(2),
             'balance' => 10000,
         ]);
-        return view('show_account')
-            ->with('data',['account' => $account, 'password' => $password]);
+        return json_encode([
+            'status' => 'OK',
+            'account' => [
+                'number' => $account['number'],
+                'password' => $password,
+                'ccv2' => $account['ccv2'],
+                'expiration' => $account['expiration'],
+            ]
+        ]);
     }
 
     private function random_account_number(){
@@ -38,10 +45,17 @@ class AccountsController extends Controller
             'ccv2' => $request->get('ccv2'),
         ])->first();
         if ($account and Hash::check($request->get('password'), $account['password'])){
-            return view('show_balance')->with('data', ['balance' => $account->balance]);
+            return json_encode([
+                'status' => 'OK',
+                'account-number' => $account->number,
+                'balance' => $account->balance,
+            ]);
         }
         else
-            return abort(500);
+            return json_encode([
+                'status' => 'ERR',
+                'message' => 'Wrong information'
+            ]);
     }
 
     public function get_balance(){
