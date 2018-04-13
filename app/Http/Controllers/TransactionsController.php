@@ -25,8 +25,8 @@ class TransactionsController extends Controller
     }
 
     public function send_credit(Request $request){
-        $to = DB::table('accounts')->where('number', $request->get('to'))->first();
-        if ($to){
+        $to = Account::where('number', $request->get('to'))->first();
+        if (!$to){
             return json_encode([
                 'status' => 'ERR',
                 'message' => 'Wrong Destination Number'
@@ -49,8 +49,8 @@ class TransactionsController extends Controller
             $to->save();
 
             $transaction = Transaction::create([
-                'from_account_id' => $request->get('from_id'),
-                'to_account_id' => $request->get('to_id'),
+                'from_account_id' => Account::where('number',$request->get('from'))->first()['id'],
+                'to_account_id' =>Account::where('number',$request->get('to'))->first()['id'],
                 'amount' => $amount
             ]);
 
