@@ -24,7 +24,7 @@ class UsersController extends Controller
             Auth::loginUsingId(User::where('name', '=', $request->get('name'))->first()['id'],true);
             return json_encode([
                 'status' => 'OK',
-                'name' => Auth::user()['email'],
+                'name' => Auth::user()['name'],
             ]);
         }
         else{
